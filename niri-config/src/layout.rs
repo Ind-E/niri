@@ -124,6 +124,7 @@ pub struct LayoutPart {
     pub gaps: Option<FloatOrInt<0, 65535>>,
     #[knuffel(child)]
     pub struts: Option<Struts>,
+    // TODO implement for workspaces
     #[knuffel(child)]
     pub background_color: Option<Color>,
 }
