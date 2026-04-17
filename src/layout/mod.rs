@@ -2183,6 +2183,20 @@ impl<W: LayoutElement> Layout<W> {
         monitor.switch_workspace_down();
     }
 
+    pub fn switch_workspace_up_or_bottom(&mut self) {
+        let Some(monitor) = self.active_monitor() else {
+            return;
+        };
+        monitor.switch_workspace_up_or_bottom();
+    }
+
+    pub fn switch_workspace_down_or_top(&mut self) {
+        let Some(monitor) = self.active_monitor() else {
+            return;
+        };
+        monitor.switch_workspace_down_or_top();
+    }
+
     pub fn switch_workspace(&mut self, idx: usize) {
         let Some(monitor) = self.active_monitor() else {
             return;

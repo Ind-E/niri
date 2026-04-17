@@ -474,6 +474,10 @@ pub enum Action {
     FocusWorkspaceDown {},
     /// Focus the workspace above.
     FocusWorkspaceUp {},
+    /// Focus the workspace below, or the top workspace.
+    FocusWorkspaceDownOrTop {},
+    /// Focus the workspace above, or the bottom workspace.
+    FocusWorkspaceUpOrBottom {},
     /// Focus a workspace by reference (index or name).
     FocusWorkspace {
         /// Reference (index or name) of the workspace to focus.

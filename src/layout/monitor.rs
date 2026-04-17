@@ -1007,6 +1007,18 @@ impl<W: LayoutElement> Monitor<W> {
         changed
     }
 
+    pub fn switch_workspace_down_or_top(&mut self) {
+        if !self.switch_workspace_down() {
+            self.switch_workspace(0);
+        }
+    }
+
+    pub fn switch_workspace_up_or_bottom(&mut self) {
+        if !self.switch_workspace_up() {
+            self.switch_workspace(self.workspaces.len() - 1);
+        }
+    }
+
     fn previous_workspace_idx(&self) -> Option<usize> {
         let id = self.previous_workspace_id?;
         self.workspaces.iter().position(|w| w.id() == id)

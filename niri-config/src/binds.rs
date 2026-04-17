@@ -213,9 +213,11 @@ pub enum Action {
     CenterWindowById(u64),
     CenterVisibleColumns,
     FocusWorkspaceDown,
+    FocusWorkspaceDownOrTop,
     #[knuffel(skip)]
     FocusWorkspaceDownUnderMouse,
     FocusWorkspaceUp,
+    FocusWorkspaceUpOrBottom,
     #[knuffel(skip)]
     FocusWorkspaceUpUnderMouse,
     FocusWorkspace(#[knuffel(argument)] WorkspaceReference),
@@ -505,6 +507,8 @@ impl From<niri_ipc::Action> for Action {
             niri_ipc::Action::CenterVisibleColumns {} => Self::CenterVisibleColumns,
             niri_ipc::Action::FocusWorkspaceDown {} => Self::FocusWorkspaceDown,
             niri_ipc::Action::FocusWorkspaceUp {} => Self::FocusWorkspaceUp,
+            niri_ipc::Action::FocusWorkspaceDownOrTop {} => Self::FocusWorkspaceDownOrTop,
+            niri_ipc::Action::FocusWorkspaceUpOrBottom {} => Self::FocusWorkspaceUpOrBottom,
             niri_ipc::Action::FocusWorkspace { reference } => {
                 Self::FocusWorkspace(WorkspaceReference::from(reference))
             }
