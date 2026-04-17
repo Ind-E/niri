@@ -2075,6 +2075,20 @@ impl<W: LayoutElement> Layout<W> {
         monitor.focus_window_or_workspace_up();
     }
 
+    pub fn focus_window_or_workspace_down_or_top(&mut self) {
+        let Some(monitor) = self.active_monitor() else {
+            return;
+        };
+        monitor.focus_window_or_workspace_down_or_top();
+    }
+
+    pub fn focus_window_or_workspace_up_or_bottom(&mut self) {
+        let Some(monitor) = self.active_monitor() else {
+            return;
+        };
+        monitor.focus_window_or_workspace_up_or_bottom();
+    }
+
     pub fn focus_window_top(&mut self) {
         let Some(workspace) = self.active_workspace_mut() else {
             return;

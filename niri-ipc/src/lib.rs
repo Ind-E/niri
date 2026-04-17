@@ -378,6 +378,10 @@ pub enum Action {
     FocusWindowOrWorkspaceDown {},
     /// Focus the window or the workspace above.
     FocusWindowOrWorkspaceUp {},
+    /// Focus the window or workspace below, or the top workspace if at the bottom.
+    FocusWindowOrWorkspaceDownOrTop {},
+    /// Focus the window or workspace above, or the bottom workspace if at the top.
+    FocusWindowOrWorkspaceUpOrBottom {},
     /// Focus the topmost window.
     FocusWindowTop {},
     /// Focus the bottommost window.
