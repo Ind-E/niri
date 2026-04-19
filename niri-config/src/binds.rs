@@ -1,3 +1,4 @@
+use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::time::Duration;
@@ -769,7 +770,7 @@ where
     ) -> Result<Self, DecodeError<S>> {
         expect_only_children(node, ctx);
 
-        let mut seen_keys: HashMap<Key, Option<&knuffel::ast::SpannedNode<S>>> = HashMap::new();
+        let mut seen_keys: HashMap<Key, &knuffel::ast::SpannedNode<S>> = HashMap::new();
 
         let mut binds = Vec::new();
 
@@ -779,25 +780,26 @@ where
                     ctx.emit_error(e);
                 }
                 Ok(bind) => {
-                    if let Some(first_node_opt) = seen_keys.get_mut(&bind.key) {
-                        if let Some(first_node_name) = first_node_opt.take() {
+                    match seen_keys.entry(bind.key) {
+                        Entry::Occupied(entry) => {
                             // Even though it's technically incorrect, we use
                             // `DecodeError::Missing` here because it labels the bind with
                             // "node starts here", which is the least bad option
                             ctx.emit_error(DecodeError::missing(
-                                first_node_name,
-                                "duplicate keybind first defined here",
+                                entry.get(),
+                                "keybind first defined here",
+                            ));
+
+                            ctx.emit_error(DecodeError::unexpected(
+                                &child.node_name,
+                                "keybind",
+                                "duplicate keybind later defined here",
                             ));
                         }
-
-                        ctx.emit_error(DecodeError::unexpected(
-                            &child.node_name,
-                            "keybind",
-                            "duplicate keybind later defined here",
-                        ));
-                    } else {
-                        seen_keys.insert(bind.key, Some(child));
-                        binds.push(bind);
+                        Entry::Vacant(entry) => {
+                            entry.insert(child);
+                            binds.push(bind);
+                        }
                     }
                 }
             }
