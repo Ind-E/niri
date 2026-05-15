@@ -1591,7 +1591,13 @@ impl<W: LayoutElement> Workspace<W> {
 
         let floating = self.floating.tiles_with_render_positions();
         let visible = self.is_floating_visible();
-        let floating = floating.map(move |(tile, pos)| (tile, pos, visible));
+        let floating = floating.map(move |(tile, pos)| {
+            (
+                tile,
+                pos,
+                visible || tile.window().rules().float_above_fullscreen == Some(true),
+            )
+        });
 
         floating.chain(scrolling)
     }
@@ -1650,10 +1656,6 @@ impl<W: LayoutElement> Workspace<W> {
         layer: RenderLayer,
         push: &mut dyn FnMut(WorkspaceRenderElement<R>),
     ) {
-        if !self.is_floating_visible() && layer.is_normal() {
-            return;
-        }
-
         let view_rect = Rectangle::from_size(self.view_size);
         let floating_focus_ring = focus_ring && self.floating_is_active();
         self.floating.render(
@@ -1662,6 +1664,7 @@ impl<W: LayoutElement> Workspace<W> {
             view_rect,
             floating_focus_ring,
             layer,
+            self.is_floating_visible(),
             &mut |elem| push(elem.into()),
         );
     }
@@ -1763,14 +1766,20 @@ impl<W: LayoutElement> Workspace<W> {
 
     pub fn window_under(&self, pos: Point<f64, Logical>) -> Option<(&W, HitType)> {
         // This logic is consistent with tiles_with_render_positions().
-        if self.is_floating_visible() {
-            if let Some(rv) = self
-                .floating
+        let visible = self.is_floating_visible();
+
+        if let Some(rv) =
+            self.floating
                 .tiles_with_render_positions()
-                .find_map(|(tile, tile_pos)| HitType::hit_tile(tile, tile_pos, pos))
-            {
-                return Some(rv);
-            }
+                .find_map(|(tile, tile_pos)| {
+                    if visible || tile.window().rules().float_above_fullscreen == Some(true) {
+                        HitType::hit_tile(tile, tile_pos, pos)
+                    } else {
+                        None
+                    }
+                })
+        {
+            return Some(rv);
         }
 
         self.scrolling.window_under(pos)

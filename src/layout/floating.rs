@@ -1072,6 +1072,7 @@ impl<W: LayoutElement> FloatingSpace<W> {
         view_rect: Rectangle<f64, Logical>,
         focus_ring: bool,
         layer: RenderLayer,
+        visible: bool,
         push: &mut dyn FnMut(FloatingSpaceRenderElement<R>),
     ) {
         let scale = Scale::from(self.scale);
@@ -1088,6 +1089,13 @@ impl<W: LayoutElement> FloatingSpace<W> {
 
         let active = self.active_window_id.clone();
         for (tile, tile_pos) in self.tiles_with_render_positions() {
+            if !visible
+                && layer.is_normal()
+                && tile.window().rules().float_above_fullscreen != Some(true)
+            {
+                continue;
+            }
+
             // Skip tiles belonging to a different render layer.
             if layer.is_normal() == tile.is_moving_between_workspaces() {
                 continue;
